@@ -30,6 +30,9 @@ export default {
     process.env.NODE_ENV ||
     "development",
 
+  ALLOW_ALL_ORIGINS:
+    process.env.ALLOW_ALL_ORIGINS === "true",
+
   REFRESH_SECRET:
     process.env.REFRESH_SECRET,
 
