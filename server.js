@@ -15,6 +15,13 @@ async function startServer() {
     await connectRedis();
     logger.info("Redis connected successfully");
 
+    // Log effective CORS configuration for debugging in deployed logs
+    logger.info(
+      `ALLOW_ALL_ORIGINS=${config.ALLOW_ALL_ORIGINS}; ALLOWED_ORIGINS=${JSON.stringify(
+        config.ALLOWED_ORIGINS
+      )}`
+    );
+
     app.listen(PORT, () => {
       logger.info(`Server running on http://localhost:${PORT}`);
     });
