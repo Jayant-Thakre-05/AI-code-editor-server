@@ -13,7 +13,7 @@ import logger from "./utils/logger.js";
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-// Ensure CORS headers are present even on preflight or early errors.
+// Ensure CORS headers are available before request handling.
 app.use((req, res, next) => {
 	const origin = req.headers.origin;
 	if (!origin) return next();
@@ -33,12 +33,11 @@ app.use((req, res, next) => {
 		logger.warn(`CORS request from non-whitelisted origin: ${origin}`);
 	}
 
-	if (req.method === "OPTIONS") return res.sendStatus(204);
-
 	next();
 });
 
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api", executeRoutes);
