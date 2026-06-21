@@ -18,20 +18,18 @@ app.use((req, res, next) => {
 	const origin = req.headers.origin;
 	if (!origin) return next();
 
-	// Always echo the Origin back to support credentialed requests from browsers.
-	// This is necessary when `withCredentials: true` is used client-side.
-	res.setHeader("Access-Control-Allow-Origin", origin);
-	res.setHeader("Access-Control-Allow-Credentials", "true");
-	res.setHeader(
-		"Access-Control-Allow-Methods",
-		"GET,POST,PUT,PATCH,DELETE,OPTIONS"
-	);
-	res.setHeader(
-		"Access-Control-Allow-Headers",
-		"Content-Type,Authorization"
-	);
-
-	if (!config.ALLOWED_ORIGINS.includes(origin) && !config.ALLOW_ALL_ORIGINS) {
+	if (config.ALLOW_ALL_ORIGINS || config.ALLOWED_ORIGINS.includes(origin)) {
+		res.setHeader("Access-Control-Allow-Origin", origin);
+		res.setHeader("Access-Control-Allow-Credentials", "true");
+		res.setHeader(
+			"Access-Control-Allow-Methods",
+			"GET,POST,PUT,PATCH,DELETE,OPTIONS"
+		);
+		res.setHeader(
+			"Access-Control-Allow-Headers",
+			"Content-Type,Authorization"
+		);
+	} else {
 		logger.warn(`CORS request from non-whitelisted origin: ${origin}`);
 	}
 
@@ -43,7 +41,7 @@ app.use((req, res, next) => {
 app.use(cors(corsOptions));
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use(errorHandler);
 app.use("/api", executeRoutes);
+app.use(errorHandler);
 
 export default app;
